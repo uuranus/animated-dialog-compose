@@ -3,15 +3,14 @@ package com.uuranus.animated.compose.dialog
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -23,8 +22,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.uuranus.animated.compose.dialog.ui.theme.AnimatedcomposedialogTheme
 
 class MainActivity : ComponentActivity() {
@@ -36,7 +37,11 @@ class MainActivity : ComponentActivity() {
                 var expanded by remember { mutableStateOf(false) }
 
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable {
+                            expanded = !expanded
+                        },
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Box(
@@ -44,8 +49,32 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize(),
                     ) {
 
-                        HoldOnDialog(height = 100, horizontalPadding = 16) {
-                            expanded = !expanded
+                        if (expanded) {
+                            HoldOnDialog(
+                                onDismissRequest = {
+                                    expanded = false
+                                },
+                                horizontalPadding = 32.dp,
+                            ) {
+                                Text(
+                                    "Hold on a Second!",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .align(Alignment.Center),
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 20.sp,
+                                    color = Color.Black
+                                )
+                            }
+                        }
+
+                        Button(
+                            onClick = { expanded = !expanded },
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(16.dp)
+                        ) {
+                            Text("Start Game")
                         }
                     }
                 }
@@ -54,13 +83,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
 
 @Preview(showBackground = true)
 @Composable
@@ -73,21 +95,7 @@ fun GreetingPreview() {
                 },
             color = MaterialTheme.colorScheme.background
         ) {
-            Box(
-                modifier = Modifier
-                    .background(Color.Blue)
-                    .animateContentSize()
-                    .height(0.dp)
-                    .fillMaxWidth()
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) {
-                    }
 
-            ) {
-                Box(modifier = Modifier)
-            }
         }
 
     }

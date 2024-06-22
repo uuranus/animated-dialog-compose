@@ -1,155 +1,130 @@
 package com.uuranus.animated.compose.dialog
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateIntOffsetAsState
-import androidx.compose.animation.core.spring
+import android.view.Gravity
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Ease
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
-import androidx.compose.animation.core.*
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import kotlin.math.roundToInt
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.DialogWindowProvider
+import kotlinx.coroutines.delay
 
-internal val colorBlue = Color.Blue
-
-enum class BoxState { Collapsed, Expanded }
+internal enum class BoxState { Ready, Opening, Opened, Closing, Closed }
 
 @Composable
 fun HoldOnDialog(
-//    visibleState: Boolean,
-    height: Int,
-    horizontalPadding: Int,
-    onClick: () -> Unit,
+    onDismissRequest: () -> Unit,
+    horizontalPadding: Dp,
+    content: @Composable BoxScope.() -> Unit = {},
 ) {
+
+    var boxState by remember { mutableStateOf(BoxState.Ready) }
+
     val configuration = LocalConfiguration.current
+    val maxHeight = configuration.screenHeightDp.dp / 2
 
-    var visibleState by remember { mutableStateOf(false) }
+    val scaleX by animateFloatAsState(
+        targetValue = when (boxState) {
+            BoxState.Ready -> 0f
+            BoxState.Opening -> 1f
+            BoxState.Opened -> 1f
+            BoxState.Closing -> 0f
+            BoxState.Closed -> 0f
+        },
+        animationSpec = tween(300, easing = Ease), label = "scaleX"
+    )
+    val alpha by animateFloatAsState(
+        targetValue = when (boxState) {
+            BoxState.Ready -> 0f
+            BoxState.Opening -> 1f
+            BoxState.Opened -> 1f
+            BoxState.Closing -> 0f
+            BoxState.Closed -> 0f
+        },
+        animationSpec = tween(300, easing = Ease),
+        label = "alpha"
+    )
 
-    val screenHeight = configuration.screenHeightDp.dp
-    val screenWidth = configuration.screenWidthDp.dp
-
-    val pxScreenWidth = with(LocalDensity.current) {
-        screenWidth.toPx().roundToInt()
-    }
-    val pxScreenHeight = with(LocalDensity.current) {
-        screenHeight.toPx().roundToInt()
-    }
-
-    val pxBottom = with(LocalDensity.current) {
-        32.dp.toPx().roundToInt()
-    }
-
-    val pxHorizontalPadding = with(LocalDensity.current) {
-        horizontalPadding.dp.toPx().roundToInt()
-    }
-
-    val pxWidth = with(LocalDensity.current) {
-        screenWidth.toPx() - pxHorizontalPadding * 2
-    }
-    val pxHeight = with(LocalDensity.current) {
-        height.dp.toPx().roundToInt()
-    }
-
-//    val transition = updateTransition(visibleState, label = "Tab indicator")
-    var boxState by remember { mutableStateOf(BoxState.Collapsed) }
-    val transition = updateTransition(targetState = boxState, label = "boxState")
-
-//    val boxWidth by transition.animateDp(label = "") { state ->
-//        if (state) {
-//            screenWidth - horizontalPadding.dp * 2
-//        } else {
-//            20.dp
-//        }
-//    }
-
-    val width by transition.animateDp(label = "width") { state ->
-        when (state) {
-            BoxState.Collapsed -> 1.dp
-            BoxState.Expanded -> screenWidth / 2 - horizontalPadding.dp
+    LaunchedEffect(boxState) {
+        if (boxState == BoxState.Ready) {
+            delay(500)
+            boxState = BoxState.Opening
+        } else if (boxState == BoxState.Closing) {
+            delay(500)
+            boxState = BoxState.Closed
+        } else if (boxState == BoxState.Closed) {
+            onDismissRequest()
         }
     }
 
-//    val boxHeight by transition.animateDp(label = "") { state ->
-//        if (state) {
-//            height.dp
-//        } else {
-//            20.dp
-//        }
-//    }
+    Dialog(
+        onDismissRequest = {
+            boxState = BoxState.Closing
+        },
+        properties = DialogProperties(
+            dismissOnClickOutside = true,
+            dismissOnBackPress = true,
+            usePlatformDefaultWidth = false
+        )
+    ) {
 
-    val leftOffset by transition.animateIntOffset(label = "offset") { state ->
-        when (state) {
-            BoxState.Collapsed ->
-                IntOffset(pxScreenWidth / 2, pxScreenHeight - pxBottom - pxHeight)
+        val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
+        dialogWindowProvider.window.setGravity(Gravity.BOTTOM)
 
-            BoxState.Expanded -> IntOffset(
-                pxHorizontalPadding,
-                pxScreenHeight - pxBottom - pxHeight
-            )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontalPadding)
+                .padding(bottom = 100.dp)
+                .heightIn(min = 100.dp, max = maxHeight)
+                .graphicsLayer {
+                    this.scaleX = scaleX
+                    this.alpha = alpha
+
+                    if (scaleX == 1f && alpha == 1f) {
+                        boxState = BoxState.Opened
+                    }
+                }
+                .background(Color.White, shape = RoundedCornerShape(12.dp))
+                .clickable {
+                    boxState = BoxState.Closing
+                }
+                .padding(all = 24.dp),
+        ) {
+            AnimatedVisibility(
+                visible = boxState == BoxState.Opened,
+                enter = fadeIn(animationSpec = tween(durationMillis = 300)),
+                exit = fadeOut(animationSpec = tween(durationMillis = 300)),
+                modifier = Modifier.align(Alignment.Center)
+            ) {
+                content()
+            }
         }
     }
-
-    //leftBox
-    Box(
-        modifier = Modifier
-            .offset { leftOffset }
-            .animateContentSize(
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
-                    stiffness = Spring.StiffnessLow
-                )
-            )
-            .size(width = width, height = 100.dp)
-            .background(colorBlue)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
-//                onClick()
-                boxState = if (boxState == BoxState.Collapsed) {
-                    BoxState.Expanded
-                } else {
-                    BoxState.Collapsed
-                }
-            }
-    )
-    //rightBox
-    Box(
-        modifier = Modifier
-            .offset { IntOffset(pxScreenWidth / 2, pxScreenHeight - pxBottom - pxHeight) }
-            .animateContentSize(
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
-                    stiffness = Spring.StiffnessLow
-                )
-            )
-            .size(width = width, height = 100.dp)
-            .background(colorBlue)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
-//                onClick()
-                boxState = if (boxState == BoxState.Collapsed) {
-                    BoxState.Expanded
-                } else {
-                    BoxState.Collapsed
-                }
-            }
-    )
 
 }
