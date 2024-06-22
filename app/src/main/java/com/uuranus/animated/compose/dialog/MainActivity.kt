@@ -3,12 +3,10 @@ package com.uuranus.animated.compose.dialog
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -50,14 +48,30 @@ class MainActivity : ComponentActivity() {
                     ) {
 
                         if (expanded) {
-                            HoldOnDialog(
+//                            HoldOnDialog(
+//                                onDismissRequest = {
+//                                    expanded = false
+//                                },
+//                                horizontalPadding = 32.dp,
+//                            ) {
+//                                Text(
+//                                    "Hold on a Second!",
+//                                    modifier = Modifier
+//                                        .fillMaxWidth()
+//                                        .align(Alignment.Center),
+//                                    textAlign = TextAlign.Center,
+//                                    fontSize = 20.sp,
+//                                    color = Color.Black
+//                                )
+//                            }
+
+                            TaDaDialog(
                                 onDismissRequest = {
                                     expanded = false
-                                },
-                                horizontalPadding = 32.dp,
+                                }
                             ) {
                                 Text(
-                                    "Hold on a Second!",
+                                    "Ta-Da!",
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .align(Alignment.Center),
