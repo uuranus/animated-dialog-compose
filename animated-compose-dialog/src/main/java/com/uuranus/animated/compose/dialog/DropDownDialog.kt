@@ -13,6 +13,10 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,9 +45,13 @@ fun DropDownDialog(
     var dialogState by remember { mutableStateOf(DialogState.Ready) }
 
     val configuration = LocalConfiguration.current
-    val minHeight = 100.dp
-    val maxHeight = configuration.screenHeightDp.dp / 2
     val screenHeight = configuration.screenHeightDp.dp
+    val minHeight = 100.dp
+    val maxHeight = screenHeight / 2
+
+    val screenWidth = configuration.screenWidthDp.dp
+    val minWidth = 100.dp
+    val maxWidth = screenWidth - horizontalPadding * 2
 
     val positionY by animateFloatAsState(
         targetValue = when (dialogState) {
@@ -93,9 +101,8 @@ fun DropDownDialog(
 
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontalPadding)
-                .heightIn(min = minHeight, max = maxHeight)
+                .width(maxWidth)
+                .wrapContentHeight()
                 .graphicsLayer {
                     this.translationY = positionY
                     this.alpha = alpha
@@ -107,8 +114,7 @@ fun DropDownDialog(
                 .background(Color.White, shape = RoundedCornerShape(12.dp))
                 .clickable {
                     dialogState = DialogState.Closing
-                }
-                .padding(all = 24.dp),
+                }.padding(all = 24.dp),
         ) {
             AnimatedVisibility(
                 visible = dialogState == DialogState.Opened,

@@ -105,7 +105,7 @@ fun PopUpDialog(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontalPadding)
+                .padding(horizontal = horizontalPadding)
                 .heightIn(min = minHeight, max = maxHeight)
                 .graphicsLayer {
                     this.scaleX = scaleX

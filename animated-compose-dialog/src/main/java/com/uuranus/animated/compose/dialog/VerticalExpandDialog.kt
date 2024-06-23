@@ -11,11 +11,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -23,7 +24,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -38,7 +41,20 @@ fun VerticalExpandDialog(
     var dialogState by remember { mutableStateOf(DialogState.Ready) }
 
     val configuration = LocalConfiguration.current
-    val maxHeight = configuration.screenHeightDp.dp / 2
+
+    val minHeightDp = 100.dp
+    val minHeightPx = with(
+        LocalDensity.current
+    ) {
+        minHeightDp.roundToPx()
+    }
+    val maxHeightDp =
+        configuration.screenHeightDp.dp / 2
+    val maxHeightPx = with(
+        LocalDensity.current
+    ) {
+        maxHeightDp.roundToPx()
+    }
 
     val scaleY by animateFloatAsState(
         targetValue = when (dialogState) {
@@ -50,6 +66,7 @@ fun VerticalExpandDialog(
         },
         animationSpec = tween(300, easing = Ease), label = "scaleY"
     )
+
     val alpha by animateFloatAsState(
         targetValue = when (dialogState) {
             DialogState.Ready -> 0f
@@ -74,6 +91,18 @@ fun VerticalExpandDialog(
         }
     }
 
+    var contentHeightPx by remember { mutableIntStateOf(0) }
+    val contentHeightDp = with(
+        LocalDensity.current
+    ) {
+        contentHeightPx.toDp()
+    }
+
+    val dialogHeightDp =
+        if (contentHeightPx < minHeightPx) minHeightDp
+        else if (contentHeightPx > maxHeightPx) maxHeightDp
+        else contentHeightDp
+
     Dialog(
         onDismissRequest = {
             dialogState = DialogState.Closing
@@ -88,7 +117,14 @@ fun VerticalExpandDialog(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 100.dp, max = maxHeight)
+                .height(dialogHeightDp)
+                .clickable {
+                    dialogState = DialogState.Closing
+                }
+                .onGloballyPositioned { coordinates ->
+                    if (contentHeightPx == 0)
+                        contentHeightPx = coordinates.size.height
+                }
                 .graphicsLayer {
                     this.scaleY = scaleY
                     this.alpha = alpha
@@ -98,20 +134,18 @@ fun VerticalExpandDialog(
                     }
                 }
                 .background(Color.White)
-                .clickable {
-                    dialogState = DialogState.Closing
-                }
-                .padding(all = 24.dp),
+                .padding(16.dp)
         ) {
-
             AnimatedVisibility(
                 visible = dialogState == DialogState.Opened,
-                enter = fadeIn(animationSpec = tween(durationMillis = 100)),
-                exit = fadeOut(animationSpec = tween(durationMillis = 100)),
+                enter = fadeIn(animationSpec = tween(durationMillis = 300)),
+                exit = fadeOut(animationSpec = tween(durationMillis = 300)),
                 modifier = Modifier.align(Alignment.Center)
             ) {
                 content()
             }
+
         }
     }
+
 }

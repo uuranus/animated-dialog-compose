@@ -14,6 +14,9 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,7 +47,12 @@ fun HorizontalExpandDialog(
     var dialogState by remember { mutableStateOf(DialogState.Ready) }
 
     val configuration = LocalConfiguration.current
+    val minHeight = 100.dp
     val maxHeight = configuration.screenHeightDp.dp / 2
+
+    val screenWidth = configuration.screenWidthDp.dp
+    val minWidth = 100.dp
+    val maxWidth = screenWidth - horizontalPadding * 2
 
     val scaleX by animateFloatAsState(
         targetValue = when (dialogState) {
@@ -95,12 +103,9 @@ fun HorizontalExpandDialog(
         val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
         dialogWindowProvider.window.setGravity(Gravity.BOTTOM)
 
+
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontalPadding)
-                .padding(bottom = 100.dp)
-                .heightIn(min = 100.dp, max = maxHeight)
                 .graphicsLayer {
                     this.scaleX = scaleX
                     this.alpha = alpha
@@ -109,6 +114,8 @@ fun HorizontalExpandDialog(
                         dialogState = DialogState.Opened
                     }
                 }
+                .width(maxWidth)
+                .wrapContentHeight()
                 .background(Color.White, shape = RoundedCornerShape(12.dp))
                 .clickable {
                     dialogState = DialogState.Closing

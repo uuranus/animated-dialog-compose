@@ -10,6 +10,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -81,15 +82,17 @@ class MainActivity : ComponentActivity() {
 //                                    expanded = false
 //                                }
 //                            ) {
-//                                Text(
-//                                    "Ta-Da!",
-//                                    modifier = Modifier
-//                                        .fillMaxWidth()
-//                                        .align(Alignment.Center),
-//                                    textAlign = TextAlign.Center,
-//                                    fontSize = 20.sp,
-//                                    color = Color.Black
-//                                )
+//                                Column {
+//                                    Text(
+//                                        "Ta-Da!",
+//                                        modifier = Modifier
+//                                            .fillMaxWidth(),
+//                                        textAlign = TextAlign.Center,
+//                                        fontSize = 20.sp,
+//                                        color = Color.Black
+//                                    )
+//                                }
+//
 //                            }
 
 //                            DropDownDialog(
@@ -98,8 +101,43 @@ class MainActivity : ComponentActivity() {
 //                                },
 //                                horizontalPadding = 32.dp,
 //                            ) {
+//                                Column{
+//                                    Text(
+//                                        "Warning!",
+//                                        modifier = Modifier
+//                                            .fillMaxWidth(),
+//                                        textAlign = TextAlign.Center,
+//                                        fontSize = 20.sp,
+//                                        color = Color.Black
+//                                    )
+//                                    Text(
+//                                        "Warning!",
+//                                        modifier = Modifier
+//                                            .fillMaxWidth(),
+//                                        textAlign = TextAlign.Center,
+//                                        fontSize = 20.sp,
+//                                        color = Color.Black
+//                                    )
+//                                    Text(
+//                                        "Warning!",
+//                                        modifier = Modifier
+//                                            .fillMaxWidth(),
+//                                        textAlign = TextAlign.Center,
+//                                        fontSize = 20.sp,
+//                                        color = Color.Black
+//                                    )
+//                                }
+//
+//                            }
+
+//                            PopUpDialog(
+//                                onDismissRequest = {
+//                                    expanded = false
+//                                },
+//                                horizontalPadding = 32.dp,
+//                            ) {
 //                                Text(
-//                                    "Warning!",
+//                                    "Infomation!",
 //                                    modifier = Modifier
 //                                        .fillMaxWidth()
 //                                        .align(Alignment.Center),
@@ -108,23 +146,6 @@ class MainActivity : ComponentActivity() {
 //                                    color = Color.Black
 //                                )
 //                            }
-
-                            PopUpDialog(
-                                onDismissRequest = {
-                                    expanded = false
-                                },
-                                horizontalPadding = 32.dp,
-                            ) {
-                                Text(
-                                    "Infomation!",
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .align(Alignment.Center),
-                                    textAlign = TextAlign.Center,
-                                    fontSize = 20.sp,
-                                    color = Color.Black
-                                )
-                            }
                         }
 
                         Button(
