@@ -1,6 +1,5 @@
 package com.uuranus.animated.compose.dialog
 
-import android.view.Gravity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Ease
 import androidx.compose.animation.core.animateFloatAsState
@@ -26,16 +25,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.compose.ui.window.DialogWindowProvider
 import kotlinx.coroutines.delay
 
 @Composable
-fun HoldOnDialog(
+fun DropDownDialog(
     onDismissRequest: () -> Unit,
     horizontalPadding: Dp,
     content: @Composable BoxScope.() -> Unit = {},
@@ -44,18 +41,21 @@ fun HoldOnDialog(
     var dialogState by remember { mutableStateOf(DialogState.Ready) }
 
     val configuration = LocalConfiguration.current
+    val minHeight = 100.dp
     val maxHeight = configuration.screenHeightDp.dp / 2
+    val screenHeight = configuration.screenHeightDp.dp
 
-    val scaleX by animateFloatAsState(
+    val positionY by animateFloatAsState(
         targetValue = when (dialogState) {
-            DialogState.Ready -> 0f
-            DialogState.Opening -> 1f
-            DialogState.Opened -> 1f
-            DialogState.Closing -> 0f
-            DialogState.Closed -> 0f
+            DialogState.Ready -> -screenHeight.value / 2
+            DialogState.Opening -> 0f
+            DialogState.Opened -> 0f
+            DialogState.Closing -> -screenHeight.value / 2
+            DialogState.Closed -> -screenHeight.value / 2
         },
-        animationSpec = tween(300, easing = Ease), label = "scaleX"
+        animationSpec = tween(300, easing = Ease), label = "positionY"
     )
+
     val alpha by animateFloatAsState(
         targetValue = when (dialogState) {
             DialogState.Ready -> 0f
@@ -91,20 +91,16 @@ fun HoldOnDialog(
         )
     ) {
 
-        val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
-        dialogWindowProvider.window.setGravity(Gravity.BOTTOM)
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontalPadding)
-                .padding(bottom = 100.dp)
-                .heightIn(min = 100.dp, max = maxHeight)
+                .heightIn(min = minHeight, max = maxHeight)
                 .graphicsLayer {
-                    this.scaleX = scaleX
+                    this.translationY = positionY
                     this.alpha = alpha
 
-                    if (scaleX == 1f && alpha == 1f) {
+                    if (alpha == 1f) {
                         dialogState = DialogState.Opened
                     }
                 }

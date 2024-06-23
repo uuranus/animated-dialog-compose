@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,36 +24,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.delay
 
 @Composable
-fun PopUpDialog(
+fun VerticalExpandDialog(
     onDismissRequest: () -> Unit,
-    horizontalPadding: Dp,
     content: @Composable BoxScope.() -> Unit = {},
 ) {
 
     var dialogState by remember { mutableStateOf(DialogState.Ready) }
 
     val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
-    val minHeight = 100.dp
-    val maxHeight = screenHeight / 2
-
-    val scaleX by animateFloatAsState(
-        targetValue = when (dialogState) {
-            DialogState.Ready -> 0f
-            DialogState.Opening -> 1f
-            DialogState.Opened -> 1f
-            DialogState.Closing -> 0f
-            DialogState.Closed -> 0f
-        },
-        animationSpec = tween(300, easing = Ease), label = "scaleX"
-    )
+    val maxHeight = configuration.screenHeightDp.dp / 2
 
     val scaleY by animateFloatAsState(
         targetValue = when (dialogState) {
@@ -66,7 +50,6 @@ fun PopUpDialog(
         },
         animationSpec = tween(300, easing = Ease), label = "scaleY"
     )
-
     val alpha by animateFloatAsState(
         targetValue = when (dialogState) {
             DialogState.Ready -> 0f
@@ -81,7 +64,7 @@ fun PopUpDialog(
 
     LaunchedEffect(dialogState) {
         if (dialogState == DialogState.Ready) {
-            delay(500)
+            delay(700)
             dialogState = DialogState.Opening
         } else if (dialogState == DialogState.Closing) {
             delay(500)
@@ -105,32 +88,30 @@ fun PopUpDialog(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontalPadding)
-                .heightIn(min = minHeight, max = maxHeight)
+                .heightIn(min = 100.dp, max = maxHeight)
                 .graphicsLayer {
-                    this.scaleX = scaleX
                     this.scaleY = scaleY
                     this.alpha = alpha
 
-                    if (scaleX == 1f) {
+                    if (scaleY == 1f && alpha == 1f) {
                         dialogState = DialogState.Opened
                     }
                 }
-                .background(Color.White, shape = RoundedCornerShape(12.dp))
+                .background(Color.White)
                 .clickable {
                     dialogState = DialogState.Closing
                 }
                 .padding(all = 24.dp),
         ) {
+
             AnimatedVisibility(
                 visible = dialogState == DialogState.Opened,
-                enter = fadeIn(animationSpec = tween(durationMillis = 300)),
-                exit = fadeOut(animationSpec = tween(durationMillis = 300)),
+                enter = fadeIn(animationSpec = tween(durationMillis = 100)),
+                exit = fadeOut(animationSpec = tween(durationMillis = 100)),
                 modifier = Modifier.align(Alignment.Center)
             ) {
                 content()
             }
         }
     }
-
 }
