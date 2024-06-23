@@ -65,13 +65,30 @@ class MainActivity : ComponentActivity() {
 //                                )
 //                            }
 
-                            TaDaDialog(
+//                            TaDaDialog(
+//                                onDismissRequest = {
+//                                    expanded = false
+//                                }
+//                            ) {
+//                                Text(
+//                                    "Ta-Da!",
+//                                    modifier = Modifier
+//                                        .fillMaxWidth()
+//                                        .align(Alignment.Center),
+//                                    textAlign = TextAlign.Center,
+//                                    fontSize = 20.sp,
+//                                    color = Color.Black
+//                                )
+//                            }
+
+                            DropDownDialog(
                                 onDismissRequest = {
                                     expanded = false
-                                }
+                                },
+                                horizontalPadding = 32.dp,
                             ) {
                                 Text(
-                                    "Ta-Da!",
+                                    "Warning!",
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .align(Alignment.Center),
