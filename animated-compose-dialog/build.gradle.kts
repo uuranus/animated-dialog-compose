@@ -1,6 +1,7 @@
 plugins {
-    alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
+    id("maven-publish")
 }
 
 android {
@@ -59,4 +60,31 @@ dependencies {
     implementation(libs.androidx.compose.foundation.layout)
 
     implementation(libs.androidx.animation)
+}
+
+
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            create<MavenPublication>("release") {
+                // Applies the component for the release build variant.
+                from(components["release"])
+
+                // You can then customize attributes of the publication as shown below.
+                groupId = "com.github.uuranus"
+                artifactId = "animated-dialog-compose"
+                version = "1.0.0" // 예: 1.0.0
+            }
+            // Creates a Maven publication called “debug”.
+            create<MavenPublication>("debug") {
+                // Applies the component for the debug build variant.
+                from(components["debug"])
+
+                groupId = "com.github.uuranus"
+                artifactId = "animated-dialog-compose"
+                version = "1.0.0" // 예: 1.0.0
+            }
+        }
+    }
 }
