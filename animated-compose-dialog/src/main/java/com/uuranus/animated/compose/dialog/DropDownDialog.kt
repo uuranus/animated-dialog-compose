@@ -1,22 +1,15 @@
 package com.uuranus.animated.compose.dialog
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Ease
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,11 +17,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -39,27 +32,34 @@ import kotlinx.coroutines.delay
 fun DropDownDialog(
     onDismissRequest: () -> Unit,
     horizontalPadding: Dp,
+    dialogProperties: DialogProperties = DialogProperties(
+        dismissOnClickOutside = true,
+        dismissOnBackPress = true,
+        usePlatformDefaultWidth = false
+    ),
     content: @Composable BoxScope.() -> Unit = {},
 ) {
 
     var dialogState by remember { mutableStateOf(DialogState.Ready) }
 
     val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
-    val minHeight = 100.dp
-    val maxHeight = screenHeight / 2
+    val screenHeightDp = configuration.screenHeightDp.dp
+    val screenHeightPx = with(
+        LocalDensity.current
+    ) {
+        screenHeightDp.toPx()
+    }
+    val screenWidthDp = configuration.screenWidthDp.dp
 
-    val screenWidth = configuration.screenWidthDp.dp
-    val minWidth = 100.dp
-    val maxWidth = screenWidth - horizontalPadding * 2
+    val width = screenWidthDp - horizontalPadding * 2
 
     val positionY by animateFloatAsState(
         targetValue = when (dialogState) {
-            DialogState.Ready -> -screenHeight.value / 2
+            DialogState.Ready -> -screenHeightPx / 2
             DialogState.Opening -> 0f
             DialogState.Opened -> 0f
-            DialogState.Closing -> -screenHeight.value / 2
-            DialogState.Closed -> -screenHeight.value / 2
+            DialogState.Closing -> -screenHeightPx / 2
+            DialogState.Closed -> -screenHeightPx / 2
         },
         animationSpec = tween(300, easing = Ease), label = "positionY"
     )
@@ -74,6 +74,18 @@ fun DropDownDialog(
         },
         animationSpec = tween(300, easing = Ease),
         label = "alpha"
+    )
+
+    val contentAlpha by animateFloatAsState(
+        targetValue = when (dialogState) {
+            DialogState.Ready -> 0f
+            DialogState.Opening -> 0f
+            DialogState.Opened -> 1f
+            DialogState.Closing -> 0f
+            DialogState.Closed -> 0f
+        },
+        animationSpec = tween(300, easing = Ease),
+        label = "contentAlpha"
     )
 
     LaunchedEffect(dialogState) {
@@ -92,16 +104,12 @@ fun DropDownDialog(
         onDismissRequest = {
             dialogState = DialogState.Closing
         },
-        properties = DialogProperties(
-            dismissOnClickOutside = true,
-            dismissOnBackPress = true,
-            usePlatformDefaultWidth = false
-        )
+        properties = dialogProperties
     ) {
 
         Box(
             modifier = Modifier
-                .width(maxWidth)
+                .width(width)
                 .wrapContentHeight()
                 .graphicsLayer {
                     this.translationY = positionY
@@ -114,14 +122,12 @@ fun DropDownDialog(
                 .background(Color.White, shape = RoundedCornerShape(12.dp))
                 .clickable {
                     dialogState = DialogState.Closing
-                }.padding(all = 24.dp),
+                }
+                .padding(all = 24.dp),
         ) {
-            AnimatedVisibility(
-                visible = dialogState == DialogState.Opened,
-                enter = fadeIn(animationSpec = tween(durationMillis = 300)),
-                exit = fadeOut(animationSpec = tween(durationMillis = 300)),
-                modifier = Modifier.align(Alignment.Center)
-            ) {
+            Box(modifier = Modifier.graphicsLayer {
+                this.alpha = contentAlpha
+            }) {
                 content()
             }
         }
