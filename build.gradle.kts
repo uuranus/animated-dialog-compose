@@ -4,9 +4,3 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid) apply false
     alias(libs.plugins.androidLibrary) apply false
 }
-
-buildscript {
-    dependencies {
-        classpath("com.github.dcendents:android-maven-gradle-plugin:2.1")
-    }
-}

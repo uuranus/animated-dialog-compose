@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.jetbrainsKotlinAndroid)
     id("maven-publish")
 }
 
@@ -62,7 +62,6 @@ dependencies {
     implementation(libs.androidx.animation)
 }
 
-
 afterEvaluate {
     publishing {
         publications {
@@ -83,7 +82,7 @@ afterEvaluate {
 
                 groupId = "com.github.uuranus"
                 artifactId = "animated-dialog-compose"
-                version = "1.0.0" // 예: 1.0.0
+                version = "1.0.0"
             }
         }
     }
