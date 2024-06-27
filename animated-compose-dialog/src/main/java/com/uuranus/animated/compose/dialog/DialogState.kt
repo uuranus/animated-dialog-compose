@@ -1,14 +1,15 @@
 package com.uuranus.animated.compose.dialog
 
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+
 internal enum class DialogState { Ready, Opening, Opened, Closing, Closed }
 
-internal data class DialogSize(
-    val minHeightDp: Int = 0,
-    val minHeightPx: Int = 0,
-    val maxHeightPx: Int = 0,
-    val mexHeightDp: Int = 0,
-    val minWidthDp: Int = 0,
-    val minWidthPx: Int = 0,
-    val maxWidthDp: Int = 0,
-    val maxWidthPx: Int = 0,
+data class ContainerProperties(
+    val color: Color = Color.White,
+    val shape: Shape = RoundedCornerShape(12.dp),
+    val padding: Dp = 24.dp,
 )

@@ -17,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,8 +45,7 @@ class MainActivity : ComponentActivity() {
                             HorizontalExpandDialog(
                                 onDismissRequest = {
                                     expanded = false
-                                },
-                                horizontalPadding = 32.dp,
+                                }
                             ) {
                                 Text(
                                     "Hold on a Second!",
@@ -55,10 +53,8 @@ class MainActivity : ComponentActivity() {
                                         .fillMaxWidth(),
                                     textAlign = TextAlign.Center,
                                     fontSize = 20.sp,
-                                    color = Color.Black
                                 )
                             }
-
                         }
 
                         Button(
