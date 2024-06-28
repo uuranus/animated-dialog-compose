@@ -1,35 +1,139 @@
+
 # Animated Dialog
-Animated Custom Dialog with Jetpack Compose
+![메인 썸네일](https://github.com/uuranus/animated-dialog-compose/assets/72340294/123e763a-6d63-44bd-8b08-51f72468b13e)
+
+
 
 # Screenshots
-|         HorizontalExpandDialog          |         VerticalExpandDialog          |
-|:--------------------------------------:|:------------------------------------:|
-| <img width = "300" src="https://github.com/uuranus/animated-dialog-compose/assets/72340294/81195d97-6eef-42ec-bd14-70fe22b64f8e"> |<img width = "300" src="https://github.com/uuranus/animated-dialog-compose/assets/72340294/6fc638b0-3124-4685-b432-c8ae974ffff2"> |
 
-|         DropDownDialog                  |         PopUpDialog                 |
-|:--------------------------------------:|:----------------------------------:|
-| <img width = "300" src="https://github.com/uuranus/animated-dialog-compose/assets/72340294/7bdb74de-8667-47a0-b664-7749194491a8"> | <img width = "300" src="https://github.com/uuranus/animated-dialog-compose/assets/72340294/4405f1fa-2527-4f28-8f6a-afa7001604ba"> |
+<table>
+<tr>
+<th> Name </th> <th> Screenshot </th> <th> Usage </th>
+</tr>
+<tr>
+<td> HorizontalExpandDialog </td>
+<td><img width="300" src="https://github.com/uuranus/animated-dialog-compose/assets/72340294/81195d97-6eef-42ec-bd14-70fe22b64f8e"> </td>
+<td>
+    
+```kotlin
 
-
-# Usage
-
-You can use the same code by simply changing the name of the dialog.
-``` kotlin
 HorizontalExpandDialog(
     onDismissRequest = {
-        // do something
-    },
-    horizontalPadding = 32.dp,
+        showDialog = false
+    }
 ) {
-    Text(
-        "Hold on a Second!",
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center,
-        fontSize = 20.sp,
-        color = Color.Black
-    )
+    // content
 }
 ```
+
+</td>
+</tr>
+<tr>
+<td> VerticalExpandDialog </td>
+<td><img width="300" src="https://github.com/uuranus/animated-dialog-compose/assets/72340294/6fc638b0-3124-4685-b432-c8ae974ffff2"></td>
+<td>
+    
+```kotlin
+
+VerticalExpandDialog(
+    onDismissRequest = {
+        showDialog = false
+    }
+) {
+    // content
+}
+```
+
+</td>
+</tr>
+<tr>
+<td> DropDownDialog </td>
+<td><img width = "300" src="https://github.com/uuranus/animated-dialog-compose/assets/72340294/7bdb74de-8667-47a0-b664-7749194491a8"> </td>
+<td>
+    
+```kotlin
+
+DropDownDialog(
+    onDismissRequest = {
+        showDialog = false
+    }
+) {
+    // content
+}
+```
+
+</td>
+</tr>
+<tr>
+<td> PopUpDialog </td>
+<td><img width="300" src="https://github.com/uuranus/animated-dialog-compose/assets/72340294/4405f1fa-2527-4f28-8f6a-afa7001604ba"></td>
+<td>
+    
+```kotlin
+
+PopUpDialog(
+    onDismissRequest = {
+        showDialog = false
+    }
+) {
+    // content
+}
+```
+
+</td>
+</tr>
+</table>
+
+# Feature
+
+<table>
+<tr>
+<th> Feature </th> <th> Screenshot </th> <th> Usage </th>
+</tr>
+<tr>
+<td> Shape </td>
+<td><img width="300" src="https://github.com/uuranus/animated-dialog-compose/assets/72340294/24beeebe-db67-4821-bfbe-1c8caf0b1026"> </td>
+<td>
+    
+```kotlin
+HorizontalExpandDialog(
+    onDismissRequest = {
+        showDialog = false
+    },
+    containerProperties = ContainerProperties(
+        shape = CutCornerShape(12.dp)
+    )
+) {
+    //content
+}
+```
+
+</td>
+</tr>
+<tr>
+<td> Color </td>
+<td><img width="300" src="https://github.com/uuranus/animated-dialog-compose/assets/72340294/b7cdd1f8-ca1a-4506-9225-834bf89b8ba1"></td>
+<td>
+    
+```kotlin
+
+VerticalExpandDialog(
+    onDismissRequest = {
+        showDialog = false
+    },
+    containerProperties = ContainerProperties(
+        color = MaterialTheme.colorScheme.errorContainer,
+        shape = RoundedCornerShape(0.dp)
+    )
+) {
+    //content
+}
+```
+
+</td>
+</tr>
+
+</table>
 
 # License
 ```
