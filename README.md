@@ -135,6 +135,26 @@ VerticalExpandDialog(
 
 </table>
 
+# Get Started
+1. Add the JitPack repository to your build file (in your root build.gradle)
+``` kotlin
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven(url = "https://jitpack.io")
+    }
+}
+```
+
+2. Add the dependency
+``` kotlin
+dependencies {
+    implementation("com.github.uuranus:animated-dialog-compose:latest-version")
+}
+```
+
 # License
 ```
 Copyright 2024 uuranus All Rights Reserved.
