@@ -1,7 +1,6 @@
 
 # Animated Dialog
-![메인 썸네일](https://github.com/uuranus/animated-dialog-compose/assets/72340294/123e763a-6d63-44bd-8b08-51f72468b13e)
-
+![메인 썸네일](https://github.com/uuranus/animated-dialog-compose/assets/72340294/33c0c95b-86b0-400f-849b-20aa8092939a)
 
 
 # Screenshots
